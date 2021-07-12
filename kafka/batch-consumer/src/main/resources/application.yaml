@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: kafka-batch-consumer
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 1
+      auto-commit: true
+      connection-timeout: 10000
+      username: postgres
+      password: pg
+    url: jdbc:postgresql://localhost:5432/demo_db
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    open-in-view: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+kafka:
+  broker: localhost:19092,localhost:29092,localhost:39092
+  group-id: batch-consumer
+  auto-off-reset: earliest
+  topic: result.topic
+  enable-idempotence: true

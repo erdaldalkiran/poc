@@ -1,0 +1,21 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="first_commit" author="ed">
+        <comment>First commit</comment>
+    </changeSet>
+
+    <changeSet id="count_table" author="ed">
+        <createTable tableName="count">
+            <column name="id" type="bigint" autoIncrement="false">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="ready_count" type="bigint"/>
+            <column name="loaded_count" type="bigint"/>
+            <column name="unloaded_count" type="bigint"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

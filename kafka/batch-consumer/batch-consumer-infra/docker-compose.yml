@@ -1,0 +1,77 @@
+version: '3.1'
+services:
+  demo-db:
+    image: postgres
+    command: -c log_statement=all
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pg
+      POSTGRES_DB: demo_db
+  zookeeper:
+    image: zookeeper:3.4.9
+    restart: always
+    hostname: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      ZOO_SERVERS: server.1=zookeeper:2888:3888
+  kafka1:
+    image: confluentinc/cp-kafka:5.4.3
+    restart: always
+    hostname: kafka1
+    ports:
+      - 19092:19092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:19092
+    depends_on:
+      - zookeeper
+  kafka2:
+    image: confluentinc/cp-kafka:5.4.3
+    restart: always
+    hostname: kafka2
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092,PLAINTEXT_HOST://localhost:29092
+    depends_on:
+      - kafka1
+  kafka3:
+    image: confluentinc/cp-kafka:5.4.3
+    restart: always
+    hostname: kafka3
+    ports:
+      - 39092:39092
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092,PLAINTEXT_HOST://localhost:39092
+    depends_on:
+      - kafka1
+  kafdrop:
+    image: obsidiandynamics/kafdrop:3.27.0
+    ports:
+      - 9000:9000
+    environment:
+      KAFKA_BROKERCONNECT: kafka1:9092,kafka2:9092,kafka3:9092
+      SERVER_SERVLET_CONTEXTPATH: "/"
+      JVM_OPTS: "-Xms32M -Xmx64M"
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+
+
+
+
